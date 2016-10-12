@@ -17,6 +17,9 @@ class InMemoryZip(object):
         self.in_memory_zip.writestr(filename_in_zip, file_contents)
         return self   # so you can daisy-chain
 
+    def read(self):
+        return self.in_memory_data.getvalue()
+        
     def writetofile(self, filename):
         """Writes the in-memory zip to a file"""
 
