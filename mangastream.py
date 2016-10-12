@@ -1,88 +1,41 @@
 
+import os
 import logging
+import begin
+import feedparser
 
-import requests
-import bs4
-
-import utils
-
-logging.basicConfig()
-logger = logging.getLogger("mangastream")
-logger.setLevel("DEBUG")
+import scraper
 
 
-def get_url_image(soup_page):
-    div_page = soup_page.find("div", attrs={"class": "page"})
-
-    if not div_page:
-        return None
-
-    url_image = div_page.find("img", attrs={"id": "manga-page"})["src"]
-
-    return url_image
+@begin.subcommand
+@begin.tracebacks
+@begin.logging
+def url(url, fname_output):
+    fzip = scraper.get_chapter(url_chapter=url)
+    fzip.writetofile(fname_output)
 
 
-def get_url_next(soup_page):
-    div_page = soup_page.find("div", attrs={"class": "page"})
+@begin.subcommand
+@begin.tracebacks
+@begin.logging
+def rss(path, overwrite=False, url_rss="https://mangastream.com/rss"):
+    if not os.path.exists(path) or not os.path.isdir(path):
+        raise ValueError("Invalid output path '{0}'".format(path))
 
-    if not div_page:
-        return None
+    rss = feedparser.parse(url_rss)
 
-    url_next = div_page.find("a")["href"]
+    for entry in rss["entries"]:
+        title = entry["title"]
+        url = entry["link"]
 
-    return url_next
+        fname_output = os.path.join(path, "{0}.zip".format(title))
+        if os.path.exists(fname_output):
+            continue
+
+        fzip = scraper.get_chapter(url_chapter=url)
+        fzip.writetofile(fname_output)
 
 
-def get_chapter(url_chapter):
-
-    url_next = url_chapter
-
-    # create an in-memory zip-file to store the retrieved images
-    fzip = utils.InMemoryZip()
-
-    counter_page = 1
-    while True:
-        logger.info("Getting page '{0}'".format(url_next))
-
-        # get the page and parse it with `BeautifulSoup`
-        response = requests.get(url_next)
-        soup_page = bs4.BeautifulSoup(response.content, "html5lib")
-
-        # retrieve the image URL
-        url_image = get_url_image(soup_page=soup_page)
-
-        # stop if no image was found
-        if not url_image:
-            break
-
-        logger.info("Getting image '{0}'".format(url_image))
-
-        # retrieve the actual image
-        response_image = requests.get(url_image)
-        
-        content_type = response_image.headers["Content-Type"]
-        image_extension = content_type.split("/")[-1]
-
-        # retrieve the last bit of the URL and use it as the image filename
-        # fname_image = os.path.basename(url_image)
-        fname_image = "{0}.{1}".format(str(counter_page).zfill(3), image_extension)
-
-        logger.info("Saving image '{0}'".format(fname_image))
-
-        # write the retrieved image into the in-memory zip-file
-        fzip = fzip.append(fname_image, response_image.content)
-
-        # get the next URL
-        url_next_candidate = get_url_next(soup_page=soup_page)
-
-        # if anything but the last bit of the URL has changed that means we were redirected to the next chapter
-        # instead of the next image so halt execution
-        if url_next.split("/")[-2] != url_next_candidate.split("/")[-2]:
-            break
-        else:
-            url_next = url_next_candidate
-
-        counter_page += 1
-
-    # return the in-memory zip-file
-    return fzip
+@begin.start
+def main():
+    pass
