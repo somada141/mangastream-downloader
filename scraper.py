@@ -77,7 +77,7 @@ def get_chapter(url_chapter):
 
         # if anything but the last bit of the URL has changed that means we were redirected to the next chapter
         # instead of the next image so halt execution
-        if url_next.split("/")[-2] != url_next_candidate.split("/")[-2]:
+        if url_next.split("/")[:-1] != url_next_candidate.split("/")[:-1]:
             break
         else:
             url_next = url_next_candidate
