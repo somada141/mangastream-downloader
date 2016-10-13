@@ -35,6 +35,8 @@ def get_url_next(soup_page):
 
 def get_chapter(url_chapter):
 
+    logger.info("Downloading chapter under URL '{0}'".format(url_chapter))
+
     url_next = url_chapter
 
     # create an in-memory zip-file to store the retrieved images
@@ -60,14 +62,14 @@ def get_chapter(url_chapter):
         # retrieve the actual image
         response_image = requests.get(url_image)
         
+        # retrieve the `Content-Type` header-value and define the extension
         content_type = response_image.headers["Content-Type"]
         image_extension = content_type.split("/")[-1]
 
-        # retrieve the last bit of the URL and use it as the image filename
-        # fname_image = os.path.basename(url_image)
+        # name the image through the counter and the mimetype-extension
         fname_image = "{0}.{1}".format(str(counter_page).zfill(3), image_extension)
 
-        logger.info("Saving image '{0}'".format(fname_image))
+        logger.info("Writing image '{0}'".format(fname_image))
 
         # write the retrieved image into the in-memory zip-file
         fzip = fzip.append(fname_image, response_image.content)
@@ -75,7 +77,7 @@ def get_chapter(url_chapter):
         # get the next URL
         url_next_candidate = get_url_next(soup_page=soup_page)
 
-        # if anything but the last bit of the URL has changed that means we were redirected to the next chapter
+        logger.info("Evaluating URL '{0}' for continuation".format(url_next_candidate))
         # instead of the next image so halt execution
         if url_next.split("/")[:-1] != url_next_candidate.split("/")[:-1]:
             break
