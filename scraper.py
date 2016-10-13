@@ -79,12 +79,19 @@ def get_chapter(url_chapter):
         url_next_candidate = get_url_next(soup_page=soup_page)
 
         logger.info("Evaluating URL '{0}' for continuation".format(url_next_candidate))
-        # instead of the next image so halt execution
-        if url_next.split("/")[:-1] != url_next_candidate.split("/")[:-1]:
-            break
-        else:
-            url_next = url_next_candidate
 
+        # if anything but the last portion of the URL has changed that means we were redirected to the next chapter
+        # instead of the next image so halt execution
+        if url_next.split("/")[-4:-1] == url_next_candidate.split("/")[-4:-1]:
+            logger.info("URL '{0}' considered part of the chapter. Continuing".format(url_next_candidate))            
+            url_next = url_next_candidate
+        else:
+            logger.info("URLs '{0}' and '{1}' are too disimilar. Stopping".format(url_next, url_next_candidate))
+            break
+
+        if counter_page > 1:
+            break
+            
         counter_page += 1
 
     # return the in-memory zip-file
