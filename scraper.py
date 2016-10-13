@@ -47,8 +47,9 @@ def get_chapter(url_chapter):
         logger.info("Getting page '{0}'".format(url_next))
 
         # get the page and parse it with `BeautifulSoup`
-        response = requests.get(url_next)
-        soup_page = bs4.BeautifulSoup(response.content, "html5lib")
+        response = requests.get(url_next, timeout=60)
+
+        soup_page = bs4.BeautifulSoup(response.content, "lxml")
 
         # retrieve the image URL
         url_image = get_url_image(soup_page=soup_page)
@@ -60,7 +61,7 @@ def get_chapter(url_chapter):
         logger.info("Getting image '{0}'".format(url_image))
 
         # retrieve the actual image
-        response_image = requests.get(url_image)
+        response_image = requests.get(url_image, timeout=60)
         
         # retrieve the `Content-Type` header-value and define the extension
         content_type = response_image.headers["Content-Type"]
