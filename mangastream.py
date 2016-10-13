@@ -13,7 +13,7 @@ def url(url, fname_output):
 
 
 @begin.subcommand
-def rss(path, overwrite=False, url_rss="https://mangastream.com/rss"):
+def rss(path="/tmp/mangastream_downloader", overwrite=False, url_rss="https://mangastream.com/rss"):
     if not os.path.exists(path) or not os.path.isdir(path):
         raise ValueError("Invalid output path '{0}'".format(path))
 
