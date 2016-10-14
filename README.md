@@ -17,6 +17,14 @@ Download all chapters under the [http://mangastream.com/rss](http://mangastream.
     mkdir chapters_rss
     python mangastream.py rss ./chapters_rss
 
+### Docker
+
+A `Dockerfile` is provided, configured so that the chapters under MangaStream RSS can be downloaded through scheduled jobs at regular intervals and stored under a shared volume. The execution of an image tagged `mangastream-downloader:latest` can be performed as follows:
+
+    docker run --rm -v /some/host/directory:/tmp/mangastream_downloader mangastream-downloader:latest
+
+where the `/some/host/directory` host directory is mapped to `/tmp/mangastream_downloader` in the container where the downloaded chapters will be stored. This directory also serves as a cache, as chapters found under that directory will not be re-downloaded.
+
 ## Underlying behaviour
 
 A few notes regarding this script's operation:
