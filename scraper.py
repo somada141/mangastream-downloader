@@ -89,9 +89,6 @@ def get_chapter(url_chapter):
             logger.info("URLs '{0}' and '{1}' are too disimilar. Stopping".format(url_next, url_next_candidate))
             break
 
-        if counter_page > 1:
-            break
-            
         counter_page += 1
 
     # return the in-memory zip-file
