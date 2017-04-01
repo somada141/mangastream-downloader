@@ -19,6 +19,9 @@ def get_url_image(soup_page):
 
     url_image = div_page.find("img", attrs={"id": "manga-page"})["src"]
 
+    if url_image.startswith("//"):
+        url_image = "http:" + url_image 
+
     return url_image
 
 
