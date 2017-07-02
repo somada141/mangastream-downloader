@@ -2,7 +2,7 @@
 
 This is a simple collection of scripts that allows one to download a [MangaStream](http://mangastream.com/) manga chapter by providing the URL to the first page of the chapter.
 
-The script scrapes the HTML source of the page, retrieves the link to the current image as well as the URL that image points to, i.e., the next page of the chapter. It then saves every page image into an im-memory zip-file and continues this process until the end of the chapter.
+The script scrapes the HTML source of the page, retrieves the link to the current image as well as the URL that image points to, i.e., the next page of the chapter. It then saves every page image into an in-memory zip-file and continues this process until the end of the chapter.
 
 ## Usage
 
