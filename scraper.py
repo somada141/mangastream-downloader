@@ -33,6 +33,8 @@ def get_url_next(soup_page):
 
     url_next = div_page.find("a")["href"]
 
+    if url_next.startswith("/"):
+        url_next = "https://mangastream.com" + url_next
     return url_next
 
 
